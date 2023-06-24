@@ -22,7 +22,7 @@ set(CMAKE_CXX_FLAGS "-O3")
 
 include_directories(
     include
-    ${CMAKE_SOURCE_DIR}/unitree_legged_sdk-master/include
+    ${CMAKE_SOURCE_DIR}/unitree_legged_sdk/include
 )
 
 
