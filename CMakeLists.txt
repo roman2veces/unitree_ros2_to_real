@@ -1,13 +1,10 @@
 cmake_minimum_required(VERSION 3.5)
 project(unitree_legged_real)
 
-
-
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 
 find_package(ros2_unitree_legged_msgs REQUIRED)
-
 
 message("-- CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
 if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "x86_64.*")
@@ -30,24 +27,46 @@ install(
 )
 
 link_directories(${CMAKE_SOURCE_DIR}/unitree_legged_sdk/lib)
+
+
+# LCM STUFF
+include_directories($ENV{UNITREE_LEGGED_SDK_PATH}/include)
+link_directories($ENV{UNITREE_LEGGED_SDK_PATH}/lib)
+string(CONCAT LEGGED_SDK_NAME libunitree_legged_sdk_$ENV{UNITREE_PLATFORM}.so)
+set(EXTRA_LIBS ${LEGGED_SDK_NAME} lcm)
+
+add_definitions(-DSDK3_2)
+
+add_executable(lcm_server_3_2 $ENV{UNITREE_LEGGED_SDK_PATH}/examples/lcm_server.cpp)
+target_link_libraries(lcm_server_3_2 ${EXTRA_LIBS} ${catkin_LIBRARIES})
+ament_target_dependencies(lcm_server_3_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 # link_directories(/home/mistlab/ros2_ws/src/unitree_ros2_to_real/unitree_legged_sdk/lib)
 
-add_executable(ros2_udp src/ros2_udp.cpp)
-target_link_libraries(ros2_udp ${EXTRA_LIBS})
-ament_target_dependencies(ros2_udp rclcpp ros2_unitree_legged_msgs)
+# add_executable(ros2_udp src/ros2_udp.cpp)
+# target_link_libraries(ros2_udp ${EXTRA_LIBS})
+# ament_target_dependencies(ros2_udp rclcpp ros2_unitree_legged_msgs)
 
-add_executable(ros2_walk_example src/ros2_walk_example.cpp)
-target_link_libraries(ros2_walk_example ${EXTRA_LIBS})
-ament_target_dependencies(ros2_walk_example rclcpp ros2_unitree_legged_msgs)
+# add_executable(ros2_walk_example src/ros2_walk_example.cpp)
+# target_link_libraries(ros2_walk_example ${EXTRA_LIBS})
+# ament_target_dependencies(ros2_walk_example rclcpp ros2_unitree_legged_msgs)
 
-add_executable(ros2_position_example src/ros2_position_example.cpp)
-target_link_libraries(ros2_position_example ${EXTRA_LIBS})
-ament_target_dependencies(ros2_position_example rclcpp ros2_unitree_legged_msgs)
+add_executable(walk_example src/walk_example.cpp)
+target_link_libraries(walk_example ${EXTRA_LIBS})
+ament_target_dependencies(walk_example rclcpp ros2_unitree_legged_msgs)
+
+# add_executable(ros2_position_example src/ros2_position_example.cpp)
+# target_link_libraries(ros2_position_example ${EXTRA_LIBS})
+# ament_target_dependencies(ros2_position_example rclcpp ros2_unitree_legged_msgs)
+
+install(DIRECTORY 
+   launch 
+   DESTINATION share/${PROJECT_NAME}/
+)
 
 install(TARGETS
-    ros2_udp
-    ros2_walk_example
-    ros2_position_example
+    walk_example
+    lcm_server_3_2
     DESTINATION lib/${PROJECT_NAME}
 )
 
