@@ -34,31 +34,7 @@ And now download unitree_legged_sdk v3.5.1 into the path `~/ros_ws/src_unitree_r
 
 
 # Build
-```
-colcon build
-```
-
-# Setup the net connection
-First, please connect the network cable between your PC and robot. Then run `ifconfig` in a terminal, you will find your port name. For example, `enx000ec6612921`.
-
-Then, open the `ipconfig.sh` file under the folder `unitree_legged_real`, modify the port name to your own. And run the following commands:
-```
-sudo chmod +x ipconfig.sh
-sudo ./ipconfig.sh
-```
-If you run the `ifconfig` again, you will find that port has `inet` and `netmask` now.
-In order to set your port automatically, you can modify `interfaces`:
-```
-sudo gedit /etc/network/interfaces
-```
-And add the following 4 lines at the end:
-```
-auto enx000ec6612921
-iface enx000ec6612921 inet static
-address 192.168.123.162
-netmask 255.255.255.0
-```
-Where the port name have to be changed to your own.
+TODO
 
 # Run the package
 You need to open 3 terminals.
@@ -87,3 +63,25 @@ source /opt/ros/foxy/setup.bash
 source install/setup.bash
 ros2 run unitree_legged_real walk_example
 ```
+
+# Setup the net connection (NOT UP TO DATE)
+First, please connect the network cable between your PC and robot. Then run `ifconfig` in a terminal, you will find your port name. For example, `enx000ec6612921`.
+
+Then, open the `ipconfig.sh` file under the folder `unitree_legged_real`, modify the port name to your own. And run the following commands:
+```
+sudo chmod +x ipconfig.sh
+sudo ./ipconfig.sh
+```
+If you run the `ifconfig` again, you will find that port has `inet` and `netmask` now.
+In order to set your port automatically, you can modify `interfaces`:
+```
+sudo gedit /etc/network/interfaces
+```
+And add the following 4 lines at the end:
+```
+auto enx000ec6612921
+iface enx000ec6612921 inet static
+address 192.168.123.162
+netmask 255.255.255.0
+```
+Where the port name have to be changed to your own.
