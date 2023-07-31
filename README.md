@@ -61,29 +61,29 @@ netmask 255.255.255.0
 Where the port name have to be changed to your own.
 
 # Run the package
-Before you do high level or low level control, you should run the `ros2_udp` node, which is a bridge that connects users and robot
+You need to open 3 terminals.
+
+Terminal 1:
 ```
-ros2 run unitree_legged_real ros2_udp highlevel
+docker start -i a1_drivers
+cd /home/mistlab/ros2_ws
+source /opt/ros/foxy/setup.bash
+source install/setup.bash
+ros2 launch unitree_legged_real real.launch.py
 ```
 
-or
-
+Terminal 2:
 ```
-ros2 run unitree_legged_real ros2_udp lowlevel
-```
-
-it depends which control mode(low level or high level) you want to use.
-
-In the high level mode, you can run the node `ros2_walk_example`
-```
-ros2 run unitree_legged_real ros2_walk_example
+docker exec -it a1_drivers bash
+source /opt/ros/foxy/setup.bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-In the low level mode, you can run the node `ros2_position_example`
+Terminal 3:
 ```
-ros2 run unitree_legged_real ros2_position_example
+docker exec -it a1_drivers bash
+cd /home/mistlab/ros2_ws
+source /opt/ros/foxy/setup.bash
+source install/setup.bash
+ros2 run unitree_legged_real walk_example
 ```
-
-And before you do the low-level control, please press L2+A to sit the robot down and then press L1+L2+start to make the robot into
-mode in which you can do joint-level control, finally make sure you hang the robot up before you run low-level control.
-
