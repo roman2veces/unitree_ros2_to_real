@@ -8,9 +8,9 @@ This version is suitable for unitree_legged_sdk v3.2.1.
 ## Dependencies:
 (this should be all installed by the Dockerfile)
 
-unitree_legged_sdk v3.2 https://github.com/unitreerobotics/unitree_legged_sdk/releases?page=2
-ros2_unitree_legged_msgs (fork) https://github.com/roman2veces/ros2_unitree_legged_msgs
-lcm https://github.com/lcm-proj/lcm/archive/refs/tags/v1.5.0.zip
+* [unitree_legged_sdk v3.2](https://github.com/unitreerobotics/unitree_legged_sdk/releases?page=2)
+* [ros2_unitree_legged_msgs (fork)](https://github.com/roman2veces/ros2_unitree_legged_msgs)
+* [lcm](https://github.com/lcm-proj/lcm/archive/refs/tags/)
 
 ## Environment
 Tested in Ubuntu 20.04 using ros2 foxy. For others operating systems see https://github.com/roman2veces/unitree_a1 
