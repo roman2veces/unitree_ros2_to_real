@@ -5,33 +5,15 @@ At this moment, you can do only high-level control(namely control the walking di
 
 This version is suitable for unitree_legged_sdk v3.2.1.
 
-## Dependencies:
+# Dependencies:
 (this should be all installed by the Dockerfile)
 
 * [unitree_legged_sdk v3.2](https://github.com/unitreerobotics/unitree_legged_sdk/releases?page=2)
 * [ros2_unitree_legged_msgs (fork)](https://github.com/roman2veces/ros2_unitree_legged_msgs)
 * [lcm](https://github.com/lcm-proj/lcm/archive/refs/tags/)
 
-## Environment
+# Environment
 Tested in Ubuntu 20.04 using ros2 foxy. For others operating systems see https://github.com/roman2veces/unitree_a1 
-
-# Dependencies
-* [unitree_legged_sdk](https://github.com/unitreerobotics): v3.5.1
-
-# Configuration
-First, creat a directory.
-```
-mkdir -p ~/ros2_ws/src
-```
-Then download this package into this `~/ros_ws/src` folder. 
-
-After you download this package into this folder, your folder should be like this
-```
-~/ros2_ws/src/unitree_ros2_to_real
-```
-
-And now download unitree_legged_sdk v3.5.1 into the path `~/ros_ws/src_unitree_ros2_to_real`
-
 
 # Build
 TODO
