@@ -1,16 +1,19 @@
 # Introduction
-This package can send control command to real robot from ROS2. You can do low-level control(namely control all joints on robot) and high-level control(namely control the walking direction and speed of robot).
+This package can send control commands to real Unitree A1 robot from ROS2. 
 
-This version is suitable for unitree_legged_sdk v3.5.1, namely Go1 robot.
+At this moment, you can do only high-level control(namely control the walking direction and speed of robot). Low-level control (namely control all joints on robot) will be ready soon.
 
-## Packages:
+This version is suitable for unitree_legged_sdk v3.2.1.
 
-Basic message function: `unitree_legged_msgs`
+## Dependencies:
+(this should be all installed by the Dockerfile)
 
-The interface between ROS and real robot: `unitree_legged_real`
+unitree_legged_sdk v3.2 https://github.com/unitreerobotics/unitree_legged_sdk/releases?page=2
+ros2_unitree_legged_msgs (fork) https://github.com/roman2veces/ros2_unitree_legged_msgs
+lcm https://github.com/lcm-proj/lcm/archive/refs/tags/v1.5.0.zip
 
 ## Environment
-We recommand users to run this package in Ubuntu 18.04 and ROS2 eloquent environment
+Tested in Ubuntu 20.04 using ros2 foxy. For others operating systems see https://github.com/roman2veces/unitree_a1 
 
 # Dependencies
 * [unitree_legged_sdk](https://github.com/unitreerobotics): v3.5.1
