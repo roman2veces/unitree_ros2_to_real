@@ -10,6 +10,12 @@ WORKDIR /home/mistlab/ros2_ws/src
 RUN git clone https://github.com/roman2veces/ros2_unitree_legged_msgs && \
     git clone https://github.com/roman2veces/unitree_ros2_to_real
 
+# Install unitree_legged_sdk 3.2 version (fork) 
+WORKDIR /home/mistlab/ros2_ws/src/unitree_ros2_to_real
+RUN git clone https://github.com/roman2veces/unitree_legged_sdk 
+RUN mkdir -p unitree_legged_sdk/build
+WORKDIR unitree_legged_sdk/build 
+RUN cmake .. && make
 
 # Install LCM library
 WORKDIR /home/mistlab/
@@ -20,13 +26,15 @@ WORKDIR lcm-1.5.0/build
 RUN cmake .. && make && sudo make install && sudo ldconfig -v
 
 # # Install unitree_legged_sdk library
-WORKDIR /home/mistlab/ros2_ws/src/unitree_ros2_to_real
-RUN wget https://github.com/unitreerobotics/unitree_legged_sdk/archive/refs/tags/v3.2.zip && \
-    unzip v3.2.zip
-RUN mv unitree_legged_sdk-3.2 unitree_legged_sdk && \
-    mkdir unitree_legged_sdk/build
-WORKDIR unitree_legged_sdk/build 
-RUN cmake .. && make
+# WORKDIR /home/mistlab/ros2_ws/src/unitree_ros2_to_real
+# RUN wget https://github.com/roman2veces/unitree_legged_sdk/archive/refs/tags/v3.2.zip && \
+#     unzip v3.2.zip
+# # RUN wget https://github.com/unitreerobotics/unitree_legged_sdk/archive/refs/tags/v3.2.zip && \
+# #     unzip v3.2.zip
+# RUN mv unitree_legged_sdk-3.2 unitree_legged_sdk && \
+#     mkdir unitree_legged_sdk/build
+# WORKDIR unitree_legged_sdk/build 
+# RUN cmake .. && make
 
 # Set environment variables
 # 3_1 is for Aliengo robot, 3_2 is for A1 robot
