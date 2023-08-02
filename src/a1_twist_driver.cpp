@@ -5,6 +5,8 @@
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <geometry_msgs/msg/twist.hpp>
+#include <std_msgs/msg/int8.hpp>
+
 #include "ros2_unitree_legged_msgs/msg/high_cmd.h"
 #include "ros2_unitree_legged_msgs/msg/high_state.h"
 #include "convert.h"
@@ -19,10 +21,11 @@ public:
     A1TwistDriver() : Node("a1_twist_driver")
     {
         twist_subs_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, std::bind(&A1TwistDriver::driver, this, std::placeholders::_1));
+        change_mode_subs_ = this->create_subscription<std_msgs::msg::Int8>("mode", 10, std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1));
     }
 
     // template <typename TLCM>
-    static void *update_loop(void *param)
+    static void *updateLoop(void *param)
     {
         UNITREE_LEGGED_SDK::LCM *data = (UNITREE_LEGGED_SDK::LCM *)param;
         while (rclcpp::ok)
@@ -35,19 +38,40 @@ public:
 private:
     void driver(const geometry_msgs::msg::Twist::SharedPtr msg)
     {
-        ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd_;
-        ros_high_cmd_.mode = 2;
-        ros_high_cmd_.forward_speed = msg->linear.x;
-        ros_high_cmd_.side_speed = msg->linear.y;
-        ros_high_cmd_.body_height = msg->linear.z;
-        ros_high_cmd_.rotate_speed = msg->angular.z;
+        ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
+        ros_high_cmd.mode = 2;
+        ros_high_cmd.forward_speed = msg->linear.x;
+        ros_high_cmd.side_speed = msg->linear.y;
+        ros_high_cmd.body_height = msg->linear.z;
+        ros_high_cmd.rotate_speed = msg->angular.z;
 
         // TODO: map yaw, pitch and roll
-        SendHighLCM = ToLcm(ros_high_cmd_, SendHighLCM);
+        SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
+        roslcm.Send(SendHighLCM);
+    }
+
+    // Low level = 1 
+    // High level = 2 
+    // At this moment, there is not a way to change to sport mode in the SDK
+    void changeMode(const std_msgs::msg::Int8::SharedPtr msg)
+    {
+        // ros_high_cmd.forward_speed = 0.0f;
+        // ros_high_cmd.side_speed = 0.0f;
+        // ros_high_cmd.rotate_speed = 0.0f;
+
+        if (msg->data != 1 && msg->data != 2)
+            return;
+        
+        ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
+        ros_high_cmd.mode = msg->data;
+
+        // TODO: map yaw, pitch and roll
+        SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
         roslcm.Send(SendHighLCM);
     }
 
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_subs_;
+    rclcpp::Subscription<std_msgs::msg::Int8>::SharedPtr change_mode_subs_;
 };
 
 int
@@ -74,7 +98,7 @@ main(int argc, char *argv[])
 
     // Threads setup
     pthread_t tid;
-    pthread_create(&tid, NULL, node->update_loop, &roslcm);
+    pthread_create(&tid, NULL, node->updateLoop, &roslcm);
 
     while (rclcpp::ok())
     {
