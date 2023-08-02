@@ -5,10 +5,43 @@ At this moment, you can do only high-level control(namely control the walking di
 
 This version is suitable for unitree_legged_sdk v3.2.1.
 
+# Get started (using Docker)
+First of all, make sure that the A1 is on and standing up correctly. Then, connect your computer to 
+the robot wifi. 
+
+Then, you need to open 3 terminals.
+
+Terminal 1:
+```
+git clone https://github.com/roman2veces/unitree_ros2_to_real.git
+cd unitree_ros2_to_real
+docker build -t <image name> .
+docker run --name <container name> -it <image name>
+source /opt/ros/foxy/setup.bash
+colcon build
+source install/setup.bash
+```
+
+Terminal 2:
+```
+docker exec -it <container name> bash
+source /opt/ros/foxy/setup.bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+Terminal 3:
+```
+docker exec -it <container name> bash
+cd /home/mistlab/ros2_ws
+source /opt/ros/foxy/setup.bash
+source install/setup.bash
+ros2 run unitree_legged_real walk_example
+```
+
 # Dependencies:
 (this should be all installed by the Dockerfile)
 
-* [unitree_legged_sdk v3.2](https://github.com/unitreerobotics/unitree_legged_sdk/releases?page=2)
+* [unitree_legged_sdk v3.2 (fork)](https://github.com/roman2veces/unitree_legged_sdk)
 * [ros2_unitree_legged_msgs (fork)](https://github.com/roman2veces/ros2_unitree_legged_msgs)
 * [lcm](https://github.com/lcm-proj/lcm/archive/refs/tags/)
 
@@ -16,7 +49,11 @@ This version is suitable for unitree_legged_sdk v3.2.1.
 Tested in Ubuntu 20.04 using ros2 foxy. For others operating systems see https://github.com/roman2veces/unitree_a1 
 
 # Build
-TODO
+```
+cd /home/mistlab/ros2_ws
+source /opt/ros/foxy/setup.bash
+colcon build
+```
 
 # Run the package
 You need to open 3 terminals.
