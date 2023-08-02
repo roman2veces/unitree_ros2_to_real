@@ -40,10 +40,16 @@ class A1TwistDriver : public rclcpp::Node
     void topic_callback(const geometry_msgs::msg::Twist::SharedPtr msg)
     {
         ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd_;
-        ros_high_cmd_.forward_speed = msg->linear.x;
+
+        if (msg->linear.x > 0)
+            ros_high_cmd_.forward_speed = 0.1f;
+        else if (msg->linear.x < 0)
+            ros_high_cmd_.forward_speed = -0.1f;
+        else
+            ros_high_cmd_.forward_speed = 0.0f;
 
         this->unitree_high_cmd_ = ToLcm(ros_high_cmd_, this->unitree_high_cmd_);
-        // roslcm.Send(unitree_high_cmd_);
+        roslcm.Send(this->unitree_high_cmd_);
     }
 };
 

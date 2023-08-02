@@ -8,6 +8,7 @@ Use of this source code is governed by the MPL-2.0 license, see LICENSE.
 
 #include "comm.h"
 #include "unitree_legged_sdk/unitree_legged_sdk.h"
+#include <iostream>
 
 namespace UNITREE_LEGGED_SDK
 {
@@ -39,7 +40,7 @@ void Lcm_Server_Low::LCMRecv()
         mylcm.lowCmdLCMHandler.counter++;
         if(mylcm.lowCmdLCMHandler.counter > 10){
             printf("Error! LCM Time out.\n");
-            exit(-1);              // can be commented out
+            // exit(-1);              // can be commented out
         }
         pthread_mutex_unlock(&mylcm.lowCmdLCMHandler.countMut);
     }
@@ -79,12 +80,12 @@ public:
 
 void Lcm_Server_High::LCMRecv()
 {
-    if(mylcm.highCmdLCMHandler.isrunning){
+    if (mylcm.highCmdLCMHandler.isrunning){
         pthread_mutex_lock(&mylcm.highCmdLCMHandler.countMut);
         mylcm.highCmdLCMHandler.counter++;
         if(mylcm.highCmdLCMHandler.counter > 10){
             printf("Error! LCM Time out.\n");
-            exit(-1);              // can be commented out
+            // exit(-1);              // can be commented out
         }
         pthread_mutex_unlock(&mylcm.highCmdLCMHandler.countMut);
     }

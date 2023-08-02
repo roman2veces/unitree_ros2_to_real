@@ -53,7 +53,7 @@ ament_target_dependencies(lcm_server_3_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${c
 
 add_executable(walk_example src/walk_example.cpp)
 target_link_libraries(walk_example ${EXTRA_LIBS})
-ament_target_dependencies(walk_example rclcpp ros2_unitree_legged_msgs)
+ament_target_dependencies(walk_example rclcpp ros2_unitree_legged_msgs geometry_msgs)
 
 add_executable(a1_twist_driver src/a1_twist_driver.cpp)
 target_link_libraries(a1_twist_driver ${EXTRA_LIBS})
