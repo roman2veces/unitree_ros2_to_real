@@ -6,14 +6,18 @@ At this moment, you can do only high-level control(namely control the walking di
 This version is suitable for unitree_legged_sdk v3.2.1.
 
 # Get started (using Docker)
-First of all, make sure that the A1 is on and standing up correctly. Then, connect your computer to 
+Start by cloning this repo:
+```
+git clone https://github.com/roman2veces/unitree_ros2_to_real.git
+```
+
+Now, make sure that the A1 is on and standing up correctly. Then, connect your computer to 
 the robot wifi. 
 
 Then, you need to open 3 terminals.
 
 Terminal 1:
 ```
-git clone https://github.com/roman2veces/unitree_ros2_to_real.git
 cd unitree_ros2_to_real
 docker build -t <image name> .
 docker run --name <container name> -it <image name>
