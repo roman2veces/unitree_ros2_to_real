@@ -3,8 +3,8 @@ project(unitree_legged_real)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-
 find_package(ros2_unitree_legged_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 message("-- CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
 if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "x86_64.*")
@@ -53,7 +53,11 @@ ament_target_dependencies(lcm_server_3_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${c
 
 add_executable(walk_example src/walk_example.cpp)
 target_link_libraries(walk_example ${EXTRA_LIBS})
-ament_target_dependencies(walk_example rclcpp ros2_unitree_legged_msgs)
+ament_target_dependencies(walk_example rclcpp ros2_unitree_legged_msgs geometry_msgs)
+
+add_executable(a1_twist_driver src/a1_twist_driver.cpp)
+target_link_libraries(a1_twist_driver ${EXTRA_LIBS})
+ament_target_dependencies(a1_twist_driver rclcpp ros2_unitree_legged_msgs geometry_msgs)
 
 # add_executable(ros2_position_example src/ros2_position_example.cpp)
 # target_link_libraries(ros2_position_example ${EXTRA_LIBS})
@@ -67,6 +71,7 @@ install(DIRECTORY
 install(TARGETS
     walk_example
     lcm_server_3_2
+    a1_twist_driver
     DESTINATION lib/${PROJECT_NAME}
 )
 
