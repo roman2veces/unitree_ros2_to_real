@@ -2,7 +2,7 @@ FROM ros:foxy
 
 RUN sudo apt update 
 # libglib2.0-dev is a LCM dependency 
-RUN sudo apt install -y git wget unzip libglib2.0-dev iputils-ping nano ros-foxy-velodyne ros-foxy-teleop-twist-keyboard 
+RUN sudo apt install -y git wget unzip libglib2.0-dev iputils-ping nano ros-foxy-joy ros-foxy-velodyne ros-foxy-teleop-twist-keyboard 
 
 # Install our source code (A1 ROS2 drivers)
 RUN mkdir -p /home/mistlab/ros2_ws/src
