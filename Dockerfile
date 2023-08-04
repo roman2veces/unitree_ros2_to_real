@@ -40,7 +40,10 @@ ENV UNITREE_SDK_VERSION=3_2
 ENV UNITREE_LEGGED_SDK_PATH=/home/mistlab/ros2_ws/src/unitree_ros2_to_real/unitree_legged_sdk
 # amd64, arm32, arm64 
 # TODO: change this to arm64 
-ENV UNITREE_PLATFORM="amd64" 
+ENV UNITREE_PLATFORM="amd64"
+
+WORKDIR /home/mistlab/ros2_ws/
+RUN . /opt/ros/foxy/setup.sh && colcon build
 
 # TODO: maybe try to make this work 
 # CMD ["source", "/opt/ros/foxy/setup.bash"]
