@@ -44,6 +44,9 @@ public:
 private:
     void driver(const geometry_msgs::msg::Twist::SharedPtr msg)
     {
+        if (!hasToMove(msg))
+            return;
+
         ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
         ros_high_cmd.mode = 2;
         ros_high_cmd.forward_speed = msg->linear.x;
@@ -54,6 +57,15 @@ private:
         // TODO: map yaw, pitch and roll
         SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
         roslcm.Send(SendHighLCM);
+    }
+
+    bool hasToMove(const geometry_msgs::msg::Twist::SharedPtr msg) const {
+        return (msg->linear.x != 0.0f 
+            || msg->linear.y != 0.0f 
+            || msg->linear.z != 0.0f 
+            || msg->angular.x != 0.0f 
+            || msg->angular.y != 0.0f 
+            || msg->angular.z != 0.0f);
     }
 
     // Low level = 1 
