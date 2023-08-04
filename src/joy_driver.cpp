@@ -37,6 +37,7 @@ class JoyDriver : public rclcpp::Node
         twistMessage.angular.z = joyMessage->axes[0];
         twistMessage.linear.x = joyMessage->axes[1];
         twistMessage.linear.y = joyMessage->axes[3];
+        twistMessage.angular.y = joyMessage->axes[4];
 
         if (joyMessage->buttons[9] == 1) {
           // Prepare the request (empty request, nothing to add)

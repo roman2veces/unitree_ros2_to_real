@@ -44,21 +44,28 @@ public:
 private:
     void driver(const geometry_msgs::msg::Twist::SharedPtr msg)
     {
-        if (!hasToMove(msg))
-            return;
-
         ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
-        ros_high_cmd.mode = 2;
-        ros_high_cmd.forward_speed = msg->linear.x;
-        ros_high_cmd.side_speed = msg->linear.y;
-        ros_high_cmd.body_height = msg->linear.z;
-        ros_high_cmd.rotate_speed = msg->angular.z;
+
+        if (is_walking) {
+            ros_high_cmd.mode = 2;
+            ros_high_cmd.forward_speed = msg->linear.x;
+            ros_high_cmd.side_speed = msg->linear.y;
+            ros_high_cmd.rotate_speed = msg->angular.z;
+            ros_high_cmd.pitch = msg->angular.y; 
+        } else {
+            ros_high_cmd.mode = 1;
+            ros_high_cmd.yaw = msg->angular.z;
+            ros_high_cmd.roll = msg->linear.y;
+            ros_high_cmd.pitch = msg->angular.y;
+            ros_high_cmd.body_height = msg->linear.x;
+        }
 
         // TODO: map yaw, pitch and roll
         SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
         roslcm.Send(SendHighLCM);
     }
 
+    // TODO: remove
     bool hasToMove(const geometry_msgs::msg::Twist::SharedPtr msg) const {
         return (msg->linear.x != 0.0f 
             || msg->linear.y != 0.0f 
