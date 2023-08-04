@@ -9,7 +9,7 @@ RUN sudo apt install -y libglib2.0-dev
 RUN sudo apt install -y iputils-ping 
 RUN sudo apt install -y libboost-all-dev
 # RUN sudo apt install -y nano 
-RUN sudo apt install -y ros-foxy-joy 
+RUN sudo apt install -y ros-foxy-joy  
 # RUN sudo apt install -y ros-foxy-velodyne 
 # RUN sudo apt install -y ros-foxy-teleop-twist-keyboard 
 

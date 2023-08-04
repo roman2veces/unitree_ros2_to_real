@@ -6,6 +6,7 @@
 #include <boost/thread/mutex.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <std_msgs/msg/int8.hpp>
+#include <std_srvs/srv/trigger.hpp>
 
 #include "ros2_unitree_legged_msgs/msg/high_cmd.h"
 #include "ros2_unitree_legged_msgs/msg/high_state.h"
@@ -21,7 +22,12 @@ public:
     A1TwistDriver() : Node("a1_twist_driver")
     {
         twist_subs_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, std::bind(&A1TwistDriver::driver, this, std::placeholders::_1));
-        change_mode_subs_ = this->create_subscription<std_msgs::msg::Int8>("mode", 10, std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1));
+        // change_mode_subs_ = this->create_subscription<std_msgs::msg::Int8>("mode", 10, std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1));
+        change_mode_srv_ = this->create_service<std_srvs::srv::Trigger>(
+            "/change_mode",
+            std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1, std::placeholders::_2)
+        );
+    
     }
 
     // template <typename TLCM>
@@ -53,25 +59,45 @@ private:
     // Low level = 1 
     // High level = 2 
     // At this moment, there is not a way to change to sport mode in the SDK
-    void changeMode(const std_msgs::msg::Int8::SharedPtr msg)
-    {
-        // ros_high_cmd.forward_speed = 0.0f;
-        // ros_high_cmd.side_speed = 0.0f;
-        // ros_high_cmd.rotate_speed = 0.0f;
+    // void changeMode(const std_msgs::msg::Int8::SharedPtr msg)
+    // {
+    //     // ros_high_cmd.forward_speed = 0.0f;
+    //     // ros_high_cmd.side_speed = 0.0f;
+    //     // ros_high_cmd.rotate_speed = 0.0f;
 
-        if (msg->data != 1 && msg->data != 2)
-            return;
+    //     if (msg->data != 1 && msg->data != 2)
+    //         return;
         
-        ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
-        ros_high_cmd.mode = msg->data;
+    //     ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
+    //     ros_high_cmd.mode = msg->data;
 
-        // TODO: map yaw, pitch and roll
+    //     // TODO: map yaw, pitch and roll
+    //     SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
+    //     roslcm.Send(SendHighLCM);
+    // }
+
+    void changeMode(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                    std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+    {
+        ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
+
+        if (is_walking) {
+            ros_high_cmd.mode = 1;
+            is_walking = false;
+        } else {
+            ros_high_cmd.mode = 2;
+            is_walking = true;
+        }
+
         SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
         roslcm.Send(SendHighLCM);
     }
 
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_subs_;
-    rclcpp::Subscription<std_msgs::msg::Int8>::SharedPtr change_mode_subs_;
+    // rclcpp::Subscription<std_msgs::msg::Int8>::SharedPtr change_mode_subs_;
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr change_mode_srv_;
+
+    bool is_walking = false;
 };
 
 int
