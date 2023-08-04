@@ -11,7 +11,7 @@ def generate_launch_description():
 
     # Define nodes
     lcm_server_node = Node(
-        package='unitree_legged_real',
+        package='unitree_ros2_to_real',
         executable='lcm_server_3_2',
         name='node_lcm_server',
         output='screen',
@@ -25,6 +25,12 @@ def generate_launch_description():
         arguments=[LaunchConfiguration('rname'), LaunchConfiguration('ctrl_level')]
     )
 
+    a1_joy_node = Node(
+        package='unitree_ros2_to_real',
+        executable='joy_driver',
+        name='a1_joy_driver'
+    )
+
     # Create launch description
     ld = LaunchDescription()
     ld.add_action(rname_arg)
@@ -32,7 +38,9 @@ def generate_launch_description():
     ld.add_action(firmwork_arg)
     ld.add_action(lcm_server_node)
     ld.add_action(joy_node)
-
+    ld.add_action(a1_joy_node)
+    
+    
     return ld
 
 

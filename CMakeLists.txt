@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
-project(unitree_legged_real)
+project(unitree_ros2_to_real)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ros2_unitree_legged_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 
 message("-- CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
 if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "x86_64.*")
@@ -58,11 +59,11 @@ ament_target_dependencies(walk_example rclcpp ros2_unitree_legged_msgs geometry_
 
 add_executable(a1_twist_driver src/a1_twist_driver.cpp)
 target_link_libraries(a1_twist_driver ${EXTRA_LIBS})
-ament_target_dependencies(a1_twist_driver rclcpp ros2_unitree_legged_msgs geometry_msgs)
+ament_target_dependencies(a1_twist_driver rclcpp ros2_unitree_legged_msgs geometry_msgs std_srvs)
 
 add_executable(joy_driver src/joy_driver.cpp)
 target_link_libraries(joy_driver ${EXTRA_LIBS})
-ament_target_dependencies(joy_driver rclcpp sensor_msgs geometry_msgs)
+ament_target_dependencies(joy_driver rclcpp sensor_msgs geometry_msgs std_srvs)
 
 # add_executable(ros2_position_example src/ros2_position_example.cpp)
 # target_link_libraries(ros2_position_example ${EXTRA_LIBS})
