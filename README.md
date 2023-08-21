@@ -34,7 +34,7 @@ Tested in Ubuntu 20.04 using ros2 foxy. For others operating systems see https:/
 
 # Run the package
 First, make sure that the A1 is on and standing up correctly. Then, connect your computer to 
-the robot wifi. 
+the robot wifi and also connect the usb controller to your computer. 
 
 Then, you need to run this commands in the terminal:
 ```
