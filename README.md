@@ -36,13 +36,24 @@ Tested in Ubuntu 20.04 using ros2 foxy. For others operating systems see https:/
 First, make sure that the A1 is on and standing up correctly. Then, connect your computer to 
 the robot wifi and also connect the usb controller to your computer. 
 
-Then, you need to run this commands in the terminal:
+Then, you need to open 2 terminals.
+
+**Terminal 1:**
 ```
 docker start -i <container name>
 cd /home/mistlab/ros2_ws
 source /opt/ros/foxy/setup.bash
 source install/setup.bash
 ros2 launch unitree_ros2_to_real joy_driver.launch.py
+```
+
+**Terminal 2:**
+```
+docker exec -it <container name> bash
+cd /home/mistlab/ros2_ws
+source /opt/ros/foxy/setup.bash
+source install/setup.bash
+ros2 run unitree_ros2_to_real a1_twist_driver
 ```
 
 # Run the package (NOT UP TO DATE)
