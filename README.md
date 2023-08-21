@@ -60,7 +60,7 @@ ros2 run unitree_ros2_to_real a1_twist_driver
 First, make sure that the A1 is on and standing up correctly. Then, connect your computer to 
 the robot wifi. 
 
-Then, you need to open 3 terminals.
+Then, you need to open 4 terminals.
 
 **Terminal 1:**
 ```
@@ -68,7 +68,7 @@ docker start -i <container name>
 cd /home/mistlab/ros2_ws
 source /opt/ros/foxy/setup.bash
 source install/setup.bash
-ros2 launch unitree_ros2_to_real joy_driver.launch.py
+ros2 launch unitree_ros2_to_real real.launch.py
 ```
 
 **Terminal 2:**
@@ -84,7 +84,15 @@ docker exec -it <container name> bash
 cd /home/mistlab/ros2_ws
 source /opt/ros/foxy/setup.bash
 source install/setup.bash
-ros2 run unitree_ros2_to_real joy_driver
+ros2 run unitree_ros2_to_real a1_twist_driver
+```
+
+**Terminal 4:**
+if you want to change control mode:
+```
+docker exec -it <container name> bash
+source /opt/ros/foxy/setup.bash
+ros2 service call /change_mode std_srvs/srv/Trigger
 ```
 
 # Setup the net connection (NOT UP TO DATE)
