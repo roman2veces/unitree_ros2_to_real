@@ -11,7 +11,7 @@ def generate_launch_description():
 
     # Define nodes
     lcm_server_node = Node(
-        package='unitree_legged_real',
+        package='unitree_ros2_to_real',
         executable='lcm_server_3_2',
         name='node_lcm_server',
         output='screen',

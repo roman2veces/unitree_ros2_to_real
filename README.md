@@ -5,10 +5,21 @@ At this moment, you can do only high-level control(namely control the walking di
 
 This version is suitable for unitree_legged_sdk v3.2.1.
 
-# Get started (using Docker)
+# Build (using Docker)
 Start by cloning this repo:
 ```
 git clone https://github.com/roman2veces/unitree_ros2_to_real.git
+```
+
+if this is the first time you use this docker image, run the following commands: 
+
+```
+cd unitree_ros2_to_real
+docker build -t <image name> .
+docker run --name <container name> -it <image name>
+source /opt/ros/foxy/setup.bash
+colcon build
+exit 
 ```
 
 Now, make sure that the A1 is on and standing up correctly. Then, connect your computer to 
@@ -16,17 +27,28 @@ the robot wifi.
 
 Then, you need to open 3 terminals.
 
-Terminal 1:
+**Terminal 1:**
+
+if this is the first time you use this docker image, run the following commands: 
+
 ```
 cd unitree_ros2_to_real
 docker build -t <image name> .
 docker run --name <container name> -it <image name>
 source /opt/ros/foxy/setup.bash
 colcon build
-source install/setup.bash
+exit 
 ```
 
-Terminal 2:
+if not, then you have already a docker container for this image, so run the following commands (assuming that you are in /home/mistlab/ros2_ws):  
+
+```
+docker start -i <container name>
+source /opt/ros/foxy/setup.bash
+source install/setup.bash 
+```
+
+**Terminal 2:**
 ```
 docker exec -it <container name> bash
 source /opt/ros/foxy/setup.bash
@@ -52,39 +74,33 @@ ros2 run unitree_legged_real walk_example
 # Environment
 Tested in Ubuntu 20.04 using ros2 foxy. For others operating systems see https://github.com/roman2veces/unitree_a1 
 
-# Build
-```
-cd /home/mistlab/ros2_ws
-source /opt/ros/foxy/setup.bash
-colcon build
-```
 
 # Run the package
 You need to open 3 terminals.
 
-Terminal 1:
+**Terminal 1:**
 ```
-docker start -i a1_drivers
+docker start -i <container name>
 cd /home/mistlab/ros2_ws
 source /opt/ros/foxy/setup.bash
 source install/setup.bash
-ros2 launch unitree_legged_real real.launch.py
+ros2 launch unitree_ros2_to_real real.launch.py
 ```
 
-Terminal 2:
+**Terminal 2:**
 ```
 docker exec -it a1_drivers bash
 source /opt/ros/foxy/setup.bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-Terminal 3:
+**Terminal 3:**
 ```
 docker exec -it a1_drivers bash
 cd /home/mistlab/ros2_ws
 source /opt/ros/foxy/setup.bash
 source install/setup.bash
-ros2 run unitree_legged_real walk_example
+ros2 run unitree_ros2_to_real joy_driver
 ```
 
 # Setup the net connection (NOT UP TO DATE)
