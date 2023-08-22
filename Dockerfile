@@ -10,7 +10,7 @@ RUN sudo apt install -y iputils-ping
 RUN sudo apt install -y libboost-all-dev
 # RUN sudo apt install -y nano 
 RUN sudo apt install -y ros-foxy-joy  
-# RUN sudo apt install -y ros-foxy-velodyne 
+RUN sudo apt install -y ros-foxy-velodyne 
 RUN sudo apt install -y ros-foxy-teleop-twist-keyboard 
 
 # Install our source code (A1 ROS2 drivers)
@@ -44,6 +44,10 @@ ENV UNITREE_PLATFORM="amd64"
 
 WORKDIR /home/mistlab/ros2_ws/
 RUN . /opt/ros/foxy/setup.sh && colcon build
+
+# Setup /root/.bashrc file 
+RUN touch /root/.bashrc \
+    && echo "source /opt/ros/foxy/setup.bash \n source /home/mistlab/ros2_ws/install/setup.bash" >> /root/.bashrc
 
 # TODO: maybe try to make this work 
 # CMD ["source", "/opt/ros/foxy/setup.bash"]
