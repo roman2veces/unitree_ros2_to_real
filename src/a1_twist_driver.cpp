@@ -96,10 +96,9 @@ private:
 int
 main(int argc, char *argv[])
 {
+    // TODO: change this by ros2 log
     std::cout << "WARNING: Control level is set to HIGH-level." << std::endl
-              << "Make sure the robot is standing on the ground." << std::endl
-              << "Press Enter to continue..." << std::endl;
-    std::cin.ignore();
+              << "Make sure the robot is standing on the ground." << std::endl;
 
     // ROS2 Setup
     rclcpp::init(argc, argv);
