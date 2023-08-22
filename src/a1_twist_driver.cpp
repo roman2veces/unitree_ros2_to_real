@@ -21,8 +21,10 @@ class A1TwistDriver : public rclcpp::Node
 public:
     A1TwistDriver() : Node("a1_twist_driver")
     {
+        this->declare_parameter("start_walking", false);
+        is_walking = this->get_parameter("start_walking").as_bool();
+
         twist_subs_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, std::bind(&A1TwistDriver::driver, this, std::placeholders::_1));
-        // change_mode_subs_ = this->create_subscription<std_msgs::msg::Int8>("mode", 10, std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1));
         change_mode_srv_ = this->create_service<std_srvs::srv::Trigger>(
             "/change_mode",
             std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1, std::placeholders::_2)
@@ -65,36 +67,9 @@ private:
         roslcm.Send(SendHighLCM);
     }
 
-    // TODO: remove
-    bool hasToMove(const geometry_msgs::msg::Twist::SharedPtr msg) const {
-        return (msg->linear.x != 0.0f 
-            || msg->linear.y != 0.0f 
-            || msg->linear.z != 0.0f 
-            || msg->angular.x != 0.0f 
-            || msg->angular.y != 0.0f 
-            || msg->angular.z != 0.0f);
-    }
 
-    // Low level = 1 
-    // High level = 2 
-    // At this moment, there is not a way to change to sport mode in the SDK
-    // void changeMode(const std_msgs::msg::Int8::SharedPtr msg)
-    // {
-    //     // ros_high_cmd.forward_speed = 0.0f;
-    //     // ros_high_cmd.side_speed = 0.0f;
-    //     // ros_high_cmd.rotate_speed = 0.0f;
-
-    //     if (msg->data != 1 && msg->data != 2)
-    //         return;
-        
-    //     ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
-    //     ros_high_cmd.mode = msg->data;
-
-    //     // TODO: map yaw, pitch and roll
-    //     SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
-    //     roslcm.Send(SendHighLCM);
-    // }
-
+    // At this moment, there is not a way to change to sport mode in the SDK.
+    // So this function only change the mode from walking to standing up without walking.
     void changeMode(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
                     std::shared_ptr<std_srvs::srv::Trigger::Response> response)
     {
@@ -113,7 +88,6 @@ private:
     }
 
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_subs_;
-    // rclcpp::Subscription<std_msgs::msg::Int8>::SharedPtr change_mode_subs_;
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr change_mode_srv_;
 
     bool is_walking = false;
