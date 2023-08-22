@@ -12,7 +12,7 @@
 #include "ros2_unitree_legged_msgs/msg/high_state.h"
 #include "convert.h"
 
-// TODO: find a way to add this variables to the class 
+// TODO: find a way to add this variables to the class
 UNITREE_LEGGED_SDK::LCM roslcm(UNITREE_LEGGED_SDK::HIGHLEVEL);
 UNITREE_LEGGED_SDK::HighCmd SendHighLCM = {0};
 
@@ -27,9 +27,7 @@ public:
         twist_subs_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, std::bind(&A1TwistDriver::driver, this, std::placeholders::_1));
         change_mode_srv_ = this->create_service<std_srvs::srv::Trigger>(
             "/change_mode",
-            std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1, std::placeholders::_2)
-        );
-    
+            std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1, std::placeholders::_2));
     }
 
     // template <typename TLCM>
@@ -48,13 +46,16 @@ private:
     {
         ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
 
-        if (is_walking) {
+        if (is_walking)
+        {
             ros_high_cmd.mode = 2;
             ros_high_cmd.forward_speed = msg->linear.x;
             ros_high_cmd.side_speed = msg->linear.y;
             ros_high_cmd.rotate_speed = msg->angular.z;
-            ros_high_cmd.pitch = msg->angular.y; 
-        } else {
+            ros_high_cmd.pitch = msg->angular.y;
+        }
+        else
+        {
             ros_high_cmd.mode = 1;
             ros_high_cmd.yaw = msg->angular.z;
             ros_high_cmd.roll = msg->linear.y;
@@ -67,7 +68,6 @@ private:
         roslcm.Send(SendHighLCM);
     }
 
-
     // At this moment, there is not a way to change to sport mode in the SDK.
     // So this function only change the mode from walking to standing up without walking.
     void changeMode(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
@@ -75,10 +75,13 @@ private:
     {
         ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
 
-        if (is_walking) {
+        if (is_walking)
+        {
             ros_high_cmd.mode = 1;
             is_walking = false;
-        } else {
+        }
+        else
+        {
             ros_high_cmd.mode = 2;
             is_walking = true;
         }
@@ -93,18 +96,12 @@ private:
     bool is_walking = false;
 };
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    // TODO: change this by ros2 log
-    std::cout << "WARNING: Control level is set to HIGH-level." << std::endl
-              << "Make sure the robot is standing on the ground." << std::endl;
-
     // ROS2 Setup
     rclcpp::init(argc, argv);
     auto node = std::make_shared<A1TwistDriver>();
     rclcpp::WallRate loop_rate(500);
-    // TODO: understand why we need a SingleThreadedExecutor
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(node);
     ros2_unitree_legged_msgs::msg::HighCmd SendHighROS;

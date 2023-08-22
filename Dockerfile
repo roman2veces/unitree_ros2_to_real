@@ -1,14 +1,13 @@
 FROM ros:foxy
 
 RUN sudo apt update 
-# libglib2.0-dev is a LCM dependency 
 RUN sudo apt install -y git 
 RUN sudo apt install -y wget 
 RUN sudo apt install -y unzip 
 RUN sudo apt install -y libglib2.0-dev 
 RUN sudo apt install -y iputils-ping 
 RUN sudo apt install -y libboost-all-dev
-# RUN sudo apt install -y nano 
+RUN sudo apt install -y nano 
 RUN sudo apt install -y ros-foxy-joy  
 RUN sudo apt install -y ros-foxy-velodyne 
 RUN sudo apt install -y ros-foxy-teleop-twist-keyboard 
@@ -38,8 +37,8 @@ RUN cmake .. && make
 # 3_1 is for Aliengo robot, 3_2 is for A1 robot
 ENV UNITREE_SDK_VERSION=3_2
 ENV UNITREE_LEGGED_SDK_PATH=/home/mistlab/ros2_ws/src/unitree_ros2_to_real/unitree_legged_sdk
-# amd64, arm32, arm64 
-# TODO: change this to arm64 
+# ATTENTION: change this environment variable if you are running this docker image in a different architecture
+# possible values: amd64, arm32, arm64 
 ENV UNITREE_PLATFORM="amd64"
 
 WORKDIR /home/mistlab/ros2_ws/
@@ -47,10 +46,4 @@ RUN . /opt/ros/foxy/setup.sh && colcon build
 
 # Setup /root/.bashrc file 
 RUN touch /root/.bashrc \
-    && echo "source /opt/ros/foxy/setup.bash \n source /home/mistlab/ros2_ws/install/setup.bash" >> /root/.bashrc
-
-# TODO: maybe try to make this work 
-# CMD ["source", "/opt/ros/foxy/setup.bash"]
-# CMD ["cd", "/home/mistlab/ros2_ws"]
-# CMD ["colcon", "build"]
-# CMD ["source", "install/setup.bash"]
+    && echo "source /opt/ros/foxy/setup.bash \nsource /home/mistlab/ros2_ws/install/setup.bash" >> /root/.bashrc

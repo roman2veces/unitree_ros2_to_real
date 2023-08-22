@@ -87,6 +87,10 @@ source install/setup.bash
 ros2 run unitree_ros2_to_real joy_driver
 ```
 
+# Important points
+
+- When building the docker image in the robot, the robot computer has a arm64 architecture. So, make sure you change the environment variable UNITREE_PLATFORM to arm64 in the dockerfile before building the image or changing the environment variable in your current docker container. When running the docker container in your computer you should use the value amd64.
+
 # Setup the net connection (NOT UP TO DATE)
 First, please connect the network cable between your PC and robot. Then run `ifconfig` in a terminal, you will find your port name. For example, `enx000ec6612921`.
 
