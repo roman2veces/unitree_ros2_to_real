@@ -74,7 +74,7 @@ ros2 topic echo /state
 ros2 topic echo /imu
 ```
 
-This data can be read it by reading the variable high_state_ros in the [src/twist_driver.cpp](https://github.com/roman2veces/unitree_ros2_to_real/blob/main/src/twist_driver.cpp)
+This data can be use it by reading the variable high_state_ros in the [src/twist_driver.cpp](https://github.com/roman2veces/unitree_ros2_to_real/blob/main/src/twist_driver.cpp)
 
 # Important points
 
