@@ -13,22 +13,18 @@ def generate_launch_description():
     lcm_server_node = Node(
         package='unitree_ros2_to_real',
         executable='lcm_server_3_2',
-        name='node_lcm_server',
+        name='lcm_server_node',
         output='screen',
         arguments=[LaunchConfiguration('rname'), LaunchConfiguration('ctrl_level')]
     )
 
-    joy_node = Node(
-        package='joy',
-        executable='joy_node',
-        name='joy',
-        arguments=[LaunchConfiguration('rname'), LaunchConfiguration('ctrl_level')]
-    )
-
-    a1_joy_node = Node(
+    twist_driver_node = Node(
         package='unitree_ros2_to_real',
-        executable='joy_driver',
-        name='a1_joy_driver'
+        executable='twist_driver',
+        name='twist_driver_node',
+        parameters=[
+            {"start_walking": True}
+        ]
     )
 
     # Create launch description
@@ -37,22 +33,6 @@ def generate_launch_description():
     ld.add_action(ctrl_level_arg)
     ld.add_action(firmwork_arg)
     ld.add_action(lcm_server_node)
-    ld.add_action(joy_node)
-    ld.add_action(a1_joy_node)
-    
+    ld.add_action(twist_driver_node)
     
     return ld
-
-
-# from launch import LaunchDescription
-# from launch_ros.actions import Node
-
-# def generate_launch_description():
-#     return LaunchDescription([
-#         Node(package='unitree_legged_real',
-#                                executable='lcm_server_3_2',
-#                                name='node_lcm_server',
-#                                respawn=False,
-#                                output="screen",
-#                                parameters=["a1", "highlevel"])
-#         ])
