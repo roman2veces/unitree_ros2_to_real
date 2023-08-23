@@ -46,6 +46,7 @@ def generate_launch_description():
     ld.add_action(firmwork_arg)
     ld.add_action(lcm_server_node)
     ld.add_action(joy_node)
-    ld.add_action(a1_joy_node)
+    ld.add_action(joy_to_twist_node)
+    ld.add_action(twist_driver_node)
     
     return ld
