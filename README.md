@@ -26,6 +26,9 @@ docker build -t <image name> .
 
 # The argument: -v /dev/:/dev/ allows us to access to the usb controller in Linux
 docker run --name <container name> -v /dev/:/dev/ -it <image name>
+
+# We couldn't install this package with the Dockerfile, so you have to do it manually:
+sudo apt install -y ros-foxy-teleop-twist-keyboard 
 exit 
 ```
 
@@ -48,14 +51,11 @@ ros2 launch unitree_ros2_to_real joy_control.launch.py
 ```
 
 Only if you took position_control.launch.py or walking_control.launch.py, you will need the next 
-terminal to launch a twist driver 
+terminal to launch a twist driver
 
 **Terminal 2:**
 ```
 docker exec -it <container name> bash
-
-# We couldn't install this package with the Dockerfile, so you have to do it manually:
-sudo apt install -y ros-foxy-teleop-twist-keyboard 
 
 # I strongly recommend to change the speed when using the teleop_twist_keyboard package
 # you will see the indications to do it after executing the next command
