@@ -9,8 +9,8 @@ RUN sudo apt install -y iputils-ping
 RUN sudo apt install -y libboost-all-dev
 RUN sudo apt install -y nano 
 RUN sudo apt install -y ros-foxy-joy  
-RUN sudo apt install -y ros-foxy-velodyne 
-RUN sudo apt install -y ros-foxy-teleop-twist-keyboard 
+# RUN sudo apt install -y ros-foxy-velodyne 
+# RUN sudo apt install -y ros-foxy-teleop-twist-keyboard 
 
 # Install our source code (A1 ROS2 drivers)
 RUN mkdir -p /home/mistlab/ros2_ws/src

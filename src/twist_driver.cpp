@@ -24,6 +24,7 @@ public:
         this->declare_parameter("start_walking", false);
         is_walking = this->get_parameter("start_walking").as_bool();
 
+        high_state_pub_ = this->create_publisher<ros2_unitree_legged_msgs::msg::HighState>("state", 10);
         twist_subs_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, std::bind(&A1TwistDriver::driver, this, std::placeholders::_1));
         change_mode_srv_ = this->create_service<std_srvs::srv::Trigger>(
             "/change_mode",
@@ -40,6 +41,10 @@ public:
             usleep(2000);
         }
     }
+
+    rclcpp::Publisher<ros2_unitree_legged_msgs::msg::HighState>::SharedPtr high_state_pub_;
+    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_subs_;
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr change_mode_srv_;
 
 private:
     void driver(const geometry_msgs::msg::Twist::SharedPtr msg)
@@ -90,9 +95,6 @@ private:
         roslcm.Send(SendHighLCM);
     }
 
-    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_subs_;
-    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr change_mode_srv_;
-
     bool is_walking = false;
 };
 
@@ -120,6 +122,15 @@ int main(int argc, char *argv[])
         roslcm.Get(RecvHighLCM);
         // TODO: do something with the high state reception
         RecvHighROS = ToRos(RecvHighLCM);
+        node->high_state_pub_->publish(RecvHighROS);
+
+        RCLCPP_INFO(node->get_logger(), "forward_speed: '%f'",  RecvHighROS.forward_speed);
+        // RCLCPP_INFO(node->get_logger(), "side_speed: '%f'",  RecvHighROS.side_speed);
+        // RCLCPP_INFO(node->get_logger(), "rotate_speed: '%f'",  RecvHighROS.rotate_speed);
+        // RCLCPP_INFO(node->get_logger(), "body_height: '%f'",  RecvHighROS.body_height);
+        // RCLCPP_INFO(node->get_logger(), "updown_speed: '%f'",  RecvHighROS.updown_speed);
+        // RCLCPP_INFO(node->get_logger(), "forward_position: '%f'",  RecvHighROS.forward_position);
+        // RCLCPP_INFO(node->get_logger(), "side_position: '%f'",  RecvHighROS.side_position);   
 
         executor.spin_some();
         loop_rate.sleep();
