@@ -62,6 +62,20 @@ docker exec -it <container name> bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
+# How to read robot state?
+In other terminal running the docker container you could see the [high state robot data](https://github.com/roman2veces/ros2_unitree_legged_msgs/blob/master/msg/HighState.msg).
+```
+docker exec -it <container name> bash
+
+# if you want to see all the high state data 
+ros2 topic echo /state
+
+# if you want to only the IMU data (make sure that the launch parameter using_imu_publisher is true)
+ros2 topic echo /imu
+```
+
+This data can be read it by reading the variable high_state_ros in the [src/twist_driver.cpp](https://github.com/roman2veces/unitree_ros2_to_real/blob/main/src/twist_driver.cpp)
+
 # Important points
 
 - When building the docker image in the robot, the robot computer has a arm64 architecture. So, make sure you change the environment variable UNITREE_PLATFORM to arm64 in the dockerfile before building the image or changing the environment variable in your current docker container. When running the docker container in your computer you should use the value amd64.
