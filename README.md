@@ -25,7 +25,7 @@ cd unitree_ros2_to_real
 docker build -t <image name> .
 
 # The argument: -v /dev/:/dev/ allows us to access to the usb controller in Linux
-docker run --name <container name> -v /dev/:/dev/ -it <image name>
+docker run --name <container name> --privileged -v /dev/:/dev/ -it <image name>
 
 # We couldn't install this package with the Dockerfile, so you have to do it manually:
 sudo apt install -y ros-foxy-teleop-twist-keyboard 
