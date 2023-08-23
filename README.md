@@ -10,7 +10,7 @@ This version is suitable for unitree_legged_sdk v3.2.1.
 * [lcm](https://github.com/lcm-proj/lcm/archive/refs/tags/)
 
 # Environment
-Tested in Ubuntu 20.04 using ros2 foxy. It can be also used in MacOS or Windows but with usb devices limited support, so you couldn't drive the robot with a usb controller but only with the keyboard.
+Tested in Ubuntu 20.04 using ros2 foxy. It can be also used in MacOS or Windows but with usb devices limited support, so you couldn't drive the robot with a usb controller but you could with the keyboard.
 
 # Build (using Docker)
 Start by cloning this repo:
@@ -26,7 +26,6 @@ docker build -t <image name> .
 
 # The argument: -v /dev/:/dev/ allows us to access to the usb controller in Linux
 docker run --name <container name> -v /dev/:/dev/ -it <image name>
-colcon build
 exit 
 ```
 
@@ -54,6 +53,9 @@ terminal to launch a twist driver
 **Terminal 2:**
 ```
 docker exec -it <container name> bash
+
+# We couldn't install this package with the Dockerfile, so you have to do it manually:
+sudo apt install -y ros-foxy-teleop-twist-keyboard 
 
 # I strongly recommend to change the speed when using the teleop_twist_keyboard package
 # you will see the indications to do it after executing the next command

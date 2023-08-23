@@ -1,38 +1,49 @@
-#include "rclcpp/rclcpp.hpp"
-
+#include <rclcpp/rclcpp.hpp>
 #include <pthread.h>
 #include <string>
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <geometry_msgs/msg/twist.hpp>
-#include <std_msgs/msg/int8.hpp>
 #include <std_srvs/srv/trigger.hpp>
 
 #include "ros2_unitree_legged_msgs/msg/high_cmd.h"
 #include "ros2_unitree_legged_msgs/msg/high_state.h"
+#include "ros2_unitree_legged_msgs/msg/imu.h"
 #include "convert.h"
 
-// TODO: find a way to add this variables to the class
-UNITREE_LEGGED_SDK::LCM roslcm(UNITREE_LEGGED_SDK::HIGHLEVEL);
-UNITREE_LEGGED_SDK::HighCmd SendHighLCM = {0};
+// If we remove the LCM layer, we would not need this global variables.
+// We tried to put them in the class but it was not working.
+UNITREE_LEGGED_SDK::LCM lcm_interface(UNITREE_LEGGED_SDK::HIGHLEVEL);
+UNITREE_LEGGED_SDK::HighCmd high_cmd_lcm = {0};
 
-class A1TwistDriver : public rclcpp::Node
+// This class allows us to drive the Unitree A1 robot with twist message
+class TwistDriver : public rclcpp::Node
 {
 public:
-    A1TwistDriver() : Node("a1_twist_driver")
+    TwistDriver() : Node("a1_twist_driver")
     {
+        // ROS parameters
         this->declare_parameter("start_walking", false);
-        is_walking = this->get_parameter("start_walking").as_bool();
-
-        high_state_pub_ = this->create_publisher<ros2_unitree_legged_msgs::msg::HighState>("state", 10);
-        twist_subs_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, std::bind(&A1TwistDriver::driver, this, std::placeholders::_1));
+        this->declare_parameter("using_imu_publisher", false);
+        is_walking_ = this->get_parameter("start_walking").as_bool();
+        using_imu_publisher = this->get_parameter("using_imu_publisher").as_bool();
+        
+        // Initilize publishers
+        high_state_pub = this->create_publisher<ros2_unitree_legged_msgs::msg::HighState>("state", 10);
+        if (using_imu_publisher)
+            imu_pub = this->create_publisher<ros2_unitree_legged_msgs::msg::IMU>("imu", 10);
+        
+        // Initilize subscribers
+        twist_subs_ = this->create_subscription<geometry_msgs::msg::Twist>("cmd_vel", 10, std::bind(&TwistDriver::driver, this, std::placeholders::_1));
+        
+        // Initilize services
         change_mode_srv_ = this->create_service<std_srvs::srv::Trigger>(
             "/change_mode",
-            std::bind(&A1TwistDriver::changeMode, this, std::placeholders::_1, std::placeholders::_2));
+            std::bind(&TwistDriver::changeMode, this, std::placeholders::_1, std::placeholders::_2));
     }
 
-    // template <typename TLCM>
-    static void *updateLoop(void *param)
+    // This loop allows us to get robot data through LCM communication layer
+    static void *lcm_update_loop(void *param)
     {
         UNITREE_LEGGED_SDK::LCM *data = (UNITREE_LEGGED_SDK::LCM *)param;
         while (rclcpp::ok)
@@ -42,16 +53,24 @@ public:
         }
     }
 
-    rclcpp::Publisher<ros2_unitree_legged_msgs::msg::HighState>::SharedPtr high_state_pub_;
+    // Declare publishers
+    rclcpp::Publisher<ros2_unitree_legged_msgs::msg::HighState>::SharedPtr high_state_pub;
+    rclcpp::Publisher<ros2_unitree_legged_msgs::msg::IMU>::SharedPtr imu_pub;
+    
+    // Declare subscribers
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr twist_subs_;
     rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr change_mode_srv_;
 
+    // Declare general attributs
+    bool using_imu_publisher = false;
+   
 private:
+    // This function allows us to drive the robot in any mode
     void driver(const geometry_msgs::msg::Twist::SharedPtr msg)
     {
         ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
 
-        if (is_walking)
+        if (is_walking_)
         {
             ros_high_cmd.mode = 2;
             ros_high_cmd.forward_speed = msg->linear.x;
@@ -68,9 +87,8 @@ private:
             ros_high_cmd.body_height = msg->linear.x;
         }
 
-        // TODO: map yaw, pitch and roll
-        SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
-        roslcm.Send(SendHighLCM);
+        high_cmd_lcm = ToLcm(ros_high_cmd, high_cmd_lcm);
+        lcm_interface.Send(high_cmd_lcm);
     }
 
     // At this moment, there is not a way to change to sport mode in the SDK.
@@ -80,57 +98,55 @@ private:
     {
         ros2_unitree_legged_msgs::msg::HighCmd ros_high_cmd;
 
-        if (is_walking)
+        if (is_walking_)
         {
             ros_high_cmd.mode = 1;
-            is_walking = false;
+            is_walking_ = false;
         }
         else
         {
             ros_high_cmd.mode = 2;
-            is_walking = true;
+            is_walking_ = true;
         }
 
-        SendHighLCM = ToLcm(ros_high_cmd, SendHighLCM);
-        roslcm.Send(SendHighLCM);
+        high_cmd_lcm = ToLcm(ros_high_cmd, high_cmd_lcm);
+        lcm_interface.Send(high_cmd_lcm);
     }
 
-    bool is_walking = false;
+    // Declare general attributs
+    bool is_walking_ = false;
 };
 
 int main(int argc, char *argv[])
 {
     // ROS2 Setup
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<A1TwistDriver>();
+    auto node = std::make_shared<TwistDriver>();
     rclcpp::WallRate loop_rate(500);
     rclcpp::executors::SingleThreadedExecutor executor;
     executor.add_node(node);
     ros2_unitree_legged_msgs::msg::HighCmd SendHighROS;
-    ros2_unitree_legged_msgs::msg::HighState RecvHighROS;
+    ros2_unitree_legged_msgs::msg::HighState high_state_ros;
 
     // LCM Setup
-    UNITREE_LEGGED_SDK::HighState RecvHighLCM = {0};
-    roslcm.SubscribeState();
+    UNITREE_LEGGED_SDK::HighState high_state_lcm = {0};
+    lcm_interface.SubscribeState();
 
     // Threads setup
     pthread_t tid;
-    pthread_create(&tid, NULL, node->updateLoop, &roslcm);
+    pthread_create(&tid, NULL, node->lcm_update_loop, &lcm_interface);
 
+    // ROS loop 
     while (rclcpp::ok())
     {
-        roslcm.Get(RecvHighLCM);
-        // TODO: do something with the high state reception
-        RecvHighROS = ToRos(RecvHighLCM);
-        node->high_state_pub_->publish(RecvHighROS);
+        lcm_interface.Get(high_state_lcm);
+        high_state_ros = ToRos(high_state_lcm);
 
-        RCLCPP_INFO(node->get_logger(), "forward_speed: '%f'",  RecvHighROS.forward_speed);
-        // RCLCPP_INFO(node->get_logger(), "side_speed: '%f'",  RecvHighROS.side_speed);
-        // RCLCPP_INFO(node->get_logger(), "rotate_speed: '%f'",  RecvHighROS.rotate_speed);
-        // RCLCPP_INFO(node->get_logger(), "body_height: '%f'",  RecvHighROS.body_height);
-        // RCLCPP_INFO(node->get_logger(), "updown_speed: '%f'",  RecvHighROS.updown_speed);
-        // RCLCPP_INFO(node->get_logger(), "forward_position: '%f'",  RecvHighROS.forward_position);
-        // RCLCPP_INFO(node->get_logger(), "side_position: '%f'",  RecvHighROS.side_position);   
+        // Publish robot state
+        node->high_state_pub->publish(high_state_ros);
+
+        if (node->using_imu_publisher)
+            node->imu_pub->publish(high_state_ros.imu);
 
         executor.spin_some();
         loop_rate.sleep();

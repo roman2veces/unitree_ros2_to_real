@@ -23,7 +23,10 @@ def generate_launch_description():
         executable='twist_driver',
         name='twist_driver_node',
         parameters=[
-            {"start_walking": True}
+            {
+                "start_walking": True,
+                "using_imu_publisher": True
+            }
         ]
     )
 

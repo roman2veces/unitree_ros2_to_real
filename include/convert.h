@@ -12,14 +12,32 @@ Use of this source code is governed by the MPL-2.0 license, see LICENSE.
 #include "ros2_unitree_legged_msgs/msg/high_state.hpp"
 #include "ros2_unitree_legged_msgs/msg/motor_cmd.hpp"
 #include "ros2_unitree_legged_msgs/msg/motor_state.hpp"
-// #include "ros2_unitree_legged_msgs/msg/bms_cmd.hpp"
-// #include "ros2_unitree_legged_msgs/msg/bms_state.hpp"
 #include "ros2_unitree_legged_msgs/msg/imu.hpp"
 
 #include "unitree_legged_sdk/unitree_legged_sdk.h"
 #include "rclcpp/rclcpp.hpp"
 
-// ------- NEW ---------
+ros2_unitree_legged_msgs::msg::IMU ToRos(UNITREE_LEGGED_SDK::IMU& imu)
+{
+    ros2_unitree_legged_msgs::msg::IMU ros_imu;
+    ros_imu.quaternion[0] = imu.quaternion[0];
+    ros_imu.quaternion[1] = imu.quaternion[1];
+    ros_imu.quaternion[2] = imu.quaternion[2];
+    ros_imu.quaternion[3] = imu.quaternion[3];
+    ros_imu.gyroscope[0] = imu.gyroscope[0];
+    ros_imu.gyroscope[1] = imu.gyroscope[1];
+    ros_imu.gyroscope[2] = imu.gyroscope[2];
+    ros_imu.accelerometer[0] = imu.accelerometer[0];
+    ros_imu.accelerometer[1] = imu.accelerometer[1];
+    ros_imu.accelerometer[2] = imu.accelerometer[2];
+    ros_imu.rpy[0] = imu.rpy[0];
+    ros_imu.rpy[1] = imu.rpy[1];
+    ros_imu.rpy[2] = imu.rpy[2];
+    ros_imu.temperature = imu.temperature;
+	
+    return ros_imu;
+}
+
 ros2_unitree_legged_msgs::msg::HighState ToRos(UNITREE_LEGGED_SDK::HighState& lcm)
 {
     ros2_unitree_legged_msgs::msg::HighState ros;
@@ -29,7 +47,7 @@ ros2_unitree_legged_msgs::msg::HighState ToRos(UNITREE_LEGGED_SDK::HighState& lc
     ros.sn = lcm.SN;
     ros.band_width = lcm.bandWidth;
     ros.mode = lcm.mode;
-    // ros.imu = ToRos(lcm.imu);
+    ros.imu = ToRos(lcm.imu);
     ros.forward_speed = lcm.forwardSpeed;
     ros.side_speed = lcm.sideSpeed;
     ros.rotate_speed = lcm.rotateSpeed;
@@ -86,6 +104,8 @@ UNITREE_LEGGED_SDK::HighCmd ToLcm(ros2_unitree_legged_msgs::msg::HighCmd& ros, U
     lcm.crc = ros.crc;
     return lcm;
 }
+
+// CODE FROM UNITREE (could be usefull in the futur):
 
 // UNITREE_LEGGED_SDK::BmsCmd rosMsg2Cmd(const ros2_unitree_legged_msgs::msg::BmsCmd &msg)
 // {
