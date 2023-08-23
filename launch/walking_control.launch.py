@@ -13,15 +13,15 @@ def generate_launch_description():
     lcm_server_node = Node(
         package='unitree_ros2_to_real',
         executable='lcm_server_3_2',
-        name='node_lcm_server',
+        name='lcm_server_node',
         output='screen',
         arguments=[LaunchConfiguration('rname'), LaunchConfiguration('ctrl_level')]
     )
 
     twist_driver_node = Node(
         package='unitree_ros2_to_real',
-        executable='a1_twist_driver',
-        name='a1_twist_driver_node',
+        executable='twist_driver',
+        name='twist_driver_node',
         parameters=[
             {"start_walking": True}
         ]
@@ -36,17 +36,3 @@ def generate_launch_description():
     ld.add_action(twist_driver_node)
     
     return ld
-
-
-# from launch import LaunchDescription
-# from launch_ros.actions import Node
-
-# def generate_launch_description():
-#     return LaunchDescription([
-#         Node(package='unitree_legged_real',
-#                                executable='lcm_server_3_2',
-#                                name='node_lcm_server',
-#                                respawn=False,
-#                                output="screen",
-#                                parameters=["a1", "highlevel"])
-#         ])

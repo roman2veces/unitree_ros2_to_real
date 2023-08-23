@@ -45,19 +45,6 @@ class JoyDriver : public rclcpp::Node
 
           // Call the service
           auto future = change_mode_client_->async_send_request(request);
-
-          // We don't wait for the response because an error with the executor 
-          // TODO: maybe try to fix it 
-          // Wait for the response
-          // if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), future) ==
-          //     rclcpp::executor::FutureReturnCode::SUCCESS)
-          // {
-          //   RCLCPP_INFO(this->get_logger(), "Service call successful. Empty service triggered.");
-          // }
-          // else
-          // {
-          //   RCLCPP_ERROR(this->get_logger(), "Failed to call the service");
-          // }
         }
 
         twistPub_->publish(twistMessage);
